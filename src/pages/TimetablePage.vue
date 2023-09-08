@@ -1,12 +1,6 @@
 <template>
     <h4>Timetable</h4>
     <div>
-        <!-- 
-        <div class="left" style="visibility:hidden;">
-            <DayPilotNavigator id="nav" :config="navigatorConfig" ref="navigator" />
-        </div> 
-        -->
-
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <div class="container-fluid">
                 <div id="navbarCollapse" class="collapse navbar-collapse">
@@ -39,7 +33,7 @@
         </div>
 
         <loading :active='isLoading' :is-full-page="true" />
-        <timetable-dialog v-if="showDialog" :model="{}" :subjects="subjects" @close-dialog="toggleDialog()"></timetable-dialog>
+        <timetable-dialog v-if="showDialog" :model="timetable" :subjects="subjects" @close="toggleDialog"></timetable-dialog>
     </div>
 </template>
 
@@ -48,7 +42,7 @@
     import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
     import Loading from 'vue-loading-overlay'
-    import TimetableDialog from '../components/TimetableDialog.vue'
+    import TimetableDialog from '@/components/TimetableDialog.vue'
 
     import { useTimetableStore } from '@/stores/TimetableStore'
     import { useCourseStore } from '@/stores/CourseStore'
@@ -58,9 +52,9 @@
     const courseStore = useCourseStore()
     const subjectStore = useSubjectStore()
 
+    const selectedCourse = ref(0)
     const showDialog = ref(false)
     const isLoading = ref(false)
-    const selectedCourse = ref(0)
     const calendar = ref(null)
 
     const courses = ref([])
@@ -103,9 +97,14 @@
 
         // --- 2. calendar events
         onTimeRangeSelected: async (args) => {
-            debugger;
-            await createEvent(args.start, args.end, args.resource)
-            calendar.value.control.clearSelection();
+            timetable.value = { 
+                id: -1, 
+                subjectId: -1, 
+                classDay: args.resource, 
+                classStart: args.start.toLocaleString(), 
+                classEnd: args.end.toLocaleString() 
+            }
+            showDialog.value = true;
         },
         onEventMoved: async (args) => {
             debugger;
@@ -156,8 +155,22 @@
         e.data.locked = !e.data.locked;
         calendar.value.control.events.update(e);
     }
-    async function createEvent(start, end, resource) {
-        showDialog.value = true
+    async function createEvent(timetable) {
+        debugger;
+
+        try {
+            isLoading.value = true
+            await timetableStore.insert(timetable)
+            loadEvents(selectedCourse.value)
+            //calendar.value.control.events.add(e)
+        }
+        catch(err) {
+            alert(err.message)
+        }
+        finally {
+            isLoading.value = false
+        }
+
         // const e = modal.result;
         // calendar.value.control.events.add(e);
     }
@@ -170,30 +183,36 @@
     async function loadEvents(courseId) {
         isLoading.value = true
         await timetableStore.retrieveTimetableByCourse(courseId)
+        isLoading.value = false
+        
         let events = timetableStore.getTimetableEvents;
         calendar.value.control.update({events})
-        isLoading.value = false
     }
     async function loadCourses() {
         isLoading.value = true
         await courseStore.retrieveCourses()
-        courses.value = courseStore.getCourses
         isLoading.value = false
+
+        courses.value = courseStore.getCourses
     }
     async function loadSubjects(courseId) {
-        debugger;
         isLoading.value = true
         await subjectStore.retrieveByCourse(courseId)
-        subjects.value = subjectStore.getSubjects
         isLoading.value = false
+
+        subjects.value = subjectStore.getSubjects
     }
 
-    function toggleDialog() {
+    async function toggleDialog(model) {
         showDialog.value = !showDialog.value
+        if(model) {
+            await createEvent(model)
+        }
+
+        calendar.value.control.clearSelection()
     }
 
     watch(selectedCourse, async (n, o) => {
-        debugger;
         await loadEvents(n)
         await loadSubjects(n)
     })
@@ -207,6 +226,9 @@
             await loadEvents(selectedCourse.value)
         }
         catch(err) {
+        }
+        finally {
+            isLoading.value = false
         }
     })
 </script>

@@ -36,28 +36,28 @@ export const useTimetableStore = defineStore('TimetableStore', {
                     throw err
                 })
         },
-        async addTimeTableEvent(start, end, resource) {
-            await axios.post(`${API_URL}/timetable`)
+        async insert(model) {
+            await axios.post(`${API_URL}/timetable`, model)
                 .then(res => {
-                    
+                    return res.affectedRows
                 })
                 .catch(err => {
                     throw err
                 })
         },
-        async updateTimeTableEvent(start, end, resource) {
-            await axios.put(`${API_URL}/timetable`)
+        async update(model) {
+            await axios.put(`${API_URL}/timetable`, model)
                 .then(res => {
-                    
+                    return res.changedRows
                 })
                 .catch(err => {
                     throw err
                 })
         },
-        async deleteTimetableEvent(resource) {
+        async delete(resource) {
             await axios.delete(`${API_URL}/timetable`)
                 .then(res => {
-                    
+                    return res.affectedRows
                 })
                 .catch(err => {
                     throw err

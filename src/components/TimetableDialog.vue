@@ -1,31 +1,31 @@
 <template>
-    <div @close="close()" class="info">
-        <div class="modal-backdrop">
-            <div class="modal">
-                <header class="modal-header">
-                    <h5>Add new Event</h5>
-                    <button type="button" class="btn-close" @click="close">x</button>
-                </header>
-  
-                <section class="modal-body text-center">
+    <div class="overlay">
+        <div class="modal-display">
+            <loading :active='isLoading' :is-full-page="false" />
+
+            <!-- <h5 v-if="newVoucher">Assign Voucher:</h5>
+            <h5 v-else="!newVoucher">Edit Voucher:</h5> -->
+
+            <div class="container p-3">
+                <div class="row mb-3">
                     <div class="card p-2">
                         <div class="card-body">
                             <div class="row info">
-                                <div class="col-4">
-                                    <label class="form-label">Day</label>
-                                    <input class="form-control" v-model="model.day" readonly disabled>
+                                <div class="col-6">
+                                    <label for="classday" class="form-label">Day</label>
+                                    <input id="classday" class="form-control text-center" v-model="model.classDay" readonly disabled>
                                 </div>
-                                <div class="col-4">
-                                    <label for="inputPassword4" class="form-label">Start</label>
-                                    <input class="form-control" v-model="model.uuid" readonly disabled>
+                                <div class="col-3">
+                                    <label for="classtart" class="form-label">Start</label>
+                                    <div id="classstart" class="form-control" readonly disabled>{{ formatClassTime(model.classStart) }}</div>
                                 </div>
-                                <div class="col-4">
-                                    <label for="inputPassword4" class="form-label">End</label>
-                                    <input class="form-control" v-model="model.mpayReference" readonly disabled>
+                                <div class="col-3">
+                                    <label for="classend" class="form-label">End</label>
+                                    <div id="classend" class="form-control" readonly disabled>{{ formatClassTime(model.classEnd) }}</div>
                                 </div>
                                 <div class="col-12">
-                                    <label for="inputPassword4" class="form-label">Name</label>
-                                    <select v-model="model.subjectId" class="form-select">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <select id="subject" v-model="model.subjectId" class="form-select">
                                         <option disabled value="0">Please Select</option>
                                         <option v-for="subject in subjects" :value="subject.id">{{subject.name}}</option>
                                     </select>
@@ -33,108 +33,42 @@
                             </div>
                         </div>
                     </div>
-                </section>
-  
-                <footer class="modal-footer">
-                    <button type="button" class="btn-green" @click="close">Close Modal</button>
-                </footer>
+                </div>
 
-                <loading :active="isLoading" :is-full-page="false" />
+                <div>
+                    <button type="button" class="btn-green" @click="close(0)">Cancel</button>
+                    &nbsp;
+                    <button type="button" class="btn-green" @click="close(1)">Save</button>
+                </div>
             </div>
-        </div>    
+
+        </div>
     </div>
 </template>
 
 <script setup>
-    import { ref, onMounted, onUnmounted } from 'vue'
+    import { ref, onMounted, onUnmounted, computed } from 'vue'
     import Loading from 'vue-loading-overlay'
 
     const isLoading = ref(false)
     const isProcessing = ref(false)
 
     const props = defineProps({
-        model: {
-            type: Object
-        },
-        subjects: {
-            type: Array
-        }
+        model:      { type: Object },
+        subjects:   { type: Array }
     })
-    const emits = defineEmits(['closeDialog'])
+    const emits = defineEmits(['close'])
+
+    function formatClassTime(val) {
+        return val.split("T")[1]
+    }
+    function close(opt) {
+        emits('close', opt == 1 ? props.model: null)
+    }
 
     onMounted(async () => {
     })
 </script>
 
-<style scoped style="scss">
-    .modal-backdrop {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .modal {
-        background: #FFFFFF;
-        box-shadow: 2px 2px 20px 1px;
-        overflow-x: auto;
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60%;
-        height: 45%;
-        /*max-width: 800px;*/ /* or any other value you prefer */
-    }
-    .modal-header,
-    .modal-footer {
-        padding: 15px;
-        display: flex;
-    }
-    .modal-header {
-        position: relative;
-        border-bottom: 1px solid #eeeeee;
-        color: #4AAE9B;
-        justify-content: space-between;
-    }
-    .modal-footer {
-        border-top: 1px solid #eeeeee;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
-    .modal-body {
-        position: relative;
-        padding: 20px 10px;
-    }
-    .btn-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        border: none;
-        font-size: 20px;
-        padding: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #4AAE9B;
-        background: transparent;
-    }
-
-    .btn-green {
-        color: white;
-        background: #4AAE9B;
-        border: 1px solid #4AAE9B;
-        border-radius: 2px;
-    }
-    input.form-control {
-        font-weight: 600;
-    }
-    /* .info  * > *{
-        font-size: 0.8rem !important;
-    } */
+<style scoped>
 </style>
