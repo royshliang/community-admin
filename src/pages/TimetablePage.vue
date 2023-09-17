@@ -1,44 +1,31 @@
 <template>
-    <h4>Timetable</h4>
-    <div>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light">
-            <div class="container-fluid">
-                <div id="navbarCollapse" class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav w-50">
-                        <a href="#" class="navbar-brand">Course</a>
-                        <li class="nav-item w-50">
-                            <select v-model="selectedCourse" class="form-select">
-                                <option disabled value="0">Please Select</option>
-                                <option v-for="course in courses" :value="course.id">{{course.name}}</option>
-                            </select>
-                        </li>
-                   </ul>
-                    <ul class="nav navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Reports</a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a href="#" class="dropdown-item">Logs</a>
-                                <a href="#" class="dropdown-item">Settings</a>
-                                <!-- <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">Logout</a> -->
-                            </div>
-                        </li>
-                    </ul>
+    <loading :active='isLoading' :is-full-page="true" />
+    <transition name="fade">
+        <timetable-dialog v-if="showDialog" :model="timetable" :course="selectedCourse" @close-dialog="toggleDialog"></timetable-dialog>
+    </transition>
+
+    <div class="p-2">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand">Timetable</a>
+                <div class="d-flex">
+                    <select v-model="selectedCourse" class="form-select">
+                        <option disabled value="-1">Please Select a course</option>
+                        <option v-for="course in courses" :value="course.id">{{course.courseName}}</option>
+                    </select>
                 </div>
             </div>
         </nav>
-        
-        <div class="content">
+        <hr/>
+        <div class="container">
             <DayPilotCalendar id="dp" :config="calendarConfig" ref="calendar" />
         </div>
-
-        <loading :active='isLoading' :is-full-page="true" />
-        <timetable-dialog v-if="showDialog" :model="timetable" :subjects="subjects" @close="toggleDialog"></timetable-dialog>
     </div>
 </template>
 
 <script setup>
     import { ref, watch, onMounted } from 'vue'
+    import Swal from 'sweetalert2'
     import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
     import Loading from 'vue-loading-overlay'
@@ -46,19 +33,16 @@
 
     import { useTimetableStore } from '@/stores/TimetableStore'
     import { useCourseStore } from '@/stores/CourseStore'
-    import { useSubjectStore } from '@/stores/SubjectStore'
 
     const timetableStore = useTimetableStore()
     const courseStore = useCourseStore()
-    const subjectStore = useSubjectStore()
 
-    const selectedCourse = ref(0)
+    const selectedCourse = ref(-1)
     const showDialog = ref(false)
     const isLoading = ref(false)
     const calendar = ref(null)
 
     const courses = ref([])
-    const subjects = ref([])
     const timetable = ref({})
 
     const calendarConfig = ref({
@@ -99,10 +83,10 @@
         onTimeRangeSelected: async (args) => {
             timetable.value = { 
                 id: -1, 
-                subjectId: -1, 
+                subjectId: 0,
                 classDay: args.resource, 
-                classStart: args.start.toLocaleString(), 
-                classEnd: args.end.toLocaleString() 
+                startTime: args.start.toLocaleString(), 
+                endTime: args.end.toLocaleString() 
             }
             showDialog.value = true;
         },
@@ -156,8 +140,6 @@
         calendar.value.control.events.update(e);
     }
     async function createEvent(timetable) {
-        debugger;
-
         try {
             isLoading.value = true
             await timetableStore.insert(timetable)
@@ -180,30 +162,40 @@
     async function deleteEvent(resource) {
         debugger
     }
+
     async function loadEvents(courseId) {
-        isLoading.value = true
-        await timetableStore.retrieveTimetableByCourse(courseId)
-        isLoading.value = false
-        
-        let events = timetableStore.getTimetableEvents;
-        calendar.value.control.update({events})
+        try {
+            isLoading.value = true
+            await timetableStore.retrieveByCourse(courseId)
+            let events = timetableStore.getTimetableEvents;
+
+            calendar.value.control.update({events})
+        }
+        catch(err) {
+            Swal.fire({ icon: 'error', text: err.message })            
+        }
+        finally {
+            isLoading.value = false
+        }        
     }
     async function loadCourses() {
-        isLoading.value = true
-        await courseStore.retrieveCourses()
-        isLoading.value = false
-
-        courses.value = courseStore.getCourses
+        try {
+            isLoading.value = true
+            await courseStore.retrieveAll()
+            courses.value = courseStore.getCourses
+        }
+        catch(err) {
+            Swal.fire({ icon: 'error', text: err.message })
+        }
+        finally {
+            isLoading.value = false
+        }
     }
-    async function loadSubjects(courseId) {
-        isLoading.value = true
-        await subjectStore.retrieveByCourse(courseId)
-        isLoading.value = false
 
-        subjects.value = subjectStore.getSubjects
-    }
 
     async function toggleDialog(model) {
+        await loadSubjects(n)
+
         showDialog.value = !showDialog.value
         if(model) {
             await createEvent(model)
@@ -214,27 +206,13 @@
 
     watch(selectedCourse, async (n, o) => {
         await loadEvents(n)
-        await loadSubjects(n)
     })
-
 
     // ---- component events
     onMounted(async() => {
-        try
-        {
-            await loadCourses()
-            await loadEvents(selectedCourse.value)
-        }
-        catch(err) {
-        }
-        finally {
-            isLoading.value = false
-        }
+        await loadCourses()
     })
 </script>
 
 <style scoped>
-    a.router-link-active.router-link-exact-active {
-        color: white;
-    }
 </style>

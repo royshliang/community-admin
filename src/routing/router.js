@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router"
 
-import CoursePage from "@/pages/CoursePage.vue"
-import StudentPage from "@/pages/StudentPage.vue"
-import SubjectPage from "@/pages/SubjectPage.vue"
-import TimetablePage from "@/pages/TimetablePage.vue"
+import UserPage       from '@/pages/UserPage.vue'
+import LocationPage   from '@/pages/LocationPage.vue'
+import CoursePage     from "@/pages/CoursePage.vue"
+import StudentPage    from "@/pages/StudentPage.vue"
+import SubjectPage    from "@/pages/SubjectPage.vue"
+import TimetablePage  from "@/pages/TimetablePage.vue"
 import EventtablePage from "@/pages/EventtablePage.vue"
 
 const router = new createRouter({
@@ -19,10 +21,20 @@ const router = new createRouter({
             component: CoursePage,
         },
         {
+            path: '/location',
+            name: 'Locations',
+            component: LocationPage,
+        },
+        {
             path: '/student',
             name: 'Students',
             component: StudentPage,
         },
+        {
+            path: '/user',
+            name: 'Users',
+            component: UserPage,
+        },        
         {
             path: '/subject',
             name: 'Subjects',
@@ -35,13 +47,14 @@ const router = new createRouter({
         },
         {
             path: '/eventtable',
-            name: 'Event Table',
+            name: 'EventTable',
             component: EventtablePage
         }
 	],
 })
 
 export default router
+
 // ----- security authentication
 // import useAuthStore from "@/stores/AuthStore"
 // router.beforeEach(async (to) => {

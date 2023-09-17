@@ -3,36 +3,36 @@ import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const useCourseStore = defineStore('CourseStore', {
+export const useUserStore = defineStore('UserStore', {
     state: () => ({
-        course: {},
-        courses: []
+        user: {},
+        users: []
     }),
     getters: {
-        getCourse: (state) => {
-            return state.course
+        getUser: (state) => {
+            return state.user
         },
-        getCourses: (state) => {
-            return state.courses
+        getUsers: (state) => {
+            return state.users
         },
-        getActiveCourses: (state) => {
-            return state.courses.filter(x => x.status == 1)
+        getActiveUsers: (state) => {
+            return state.users.filter(x => x.status == 1)
         }
     },
     actions: {
         retrieveAll: async function() {
-            await axios.get(`${API_URL}/courses`)
+            await axios.get(`${API_URL}/users`)
                 .then(res => {
-                    this.courses = res.data
+                    this.users = res.data
                 })
                 .catch(err => {
                     throw err
                 })
         },
         retrieveById: async function(id) {
-            await axios.get(`${API_URL}/course/id/${id}`)
+            await axios.get(`${API_URL}/user/id/${id}`)
                 .then(res => {
-                    this.course = res.data
+                    this.user = res.data
                 })
                 .catch(err => {
                     throw err
@@ -40,7 +40,7 @@ export const useCourseStore = defineStore('CourseStore', {
         },
 
         update: async function(vm) {
-            await axios.put(`${API_URL}/course`, vm)
+            await axios.put(`${API_URL}/user`, vm)
                 .then(res => {
                     return res.data
                 })
@@ -49,7 +49,7 @@ export const useCourseStore = defineStore('CourseStore', {
                 })
         },
         mark: async function(vm) {
-            await axios.put(`${API_URL}/course/mark`, vm)
+            await axios.put(`${API_URL}/user/mark`, vm)
                 .then(res => {
                     return res.data
                 })
@@ -58,7 +58,7 @@ export const useCourseStore = defineStore('CourseStore', {
                 })
         },
         insert: async function(vm) {
-            await axios.post(`${API_URL}/course`, vm)
+            await axios.post(`${API_URL}/user`, vm)
                 .then(res => {
                     return res.data
                 })

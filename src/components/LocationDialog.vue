@@ -3,14 +3,14 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page="false" />
 
-            <h5 v-if="course.id == null">Add Course</h5>
-            <h5 v-else>Edit Course</h5>
+            <h5 v-if="location.id == null">Add Location</h5>
+            <h5 v-else>Edit Location</h5>
 
             <div class="container-fluid p-3">
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="code" class="form-label">Course Code:</label>
-                        <input type="text" id="code" class="form-control" v-model="course.code" :disabled="course.id > 0" :class="{ 'border-danger': $v.code.$dirty && $v.code.$invalid }">
+                        <label for="code" class="form-label">Code:</label>
+                        <input type="text" id="code" class="form-control" v-model="location.code" :disabled="location.id > 0" :class="{ 'border-danger': $v.code.$dirty && $v.code.$invalid }">
                         <div v-if="$v.code.$dirty && $v.code.required.$invalid" style="color: red">This field is required</div>
                         <div v-if="$v.code.$dirty && $v.code.minLength.$invalid" style="color: red">Minimum length is 4</div>
                         <div v-if="$v.code.$dirty && $v.code.maxLength.$invalid" style="color: red">Maximum length is 6</div>
@@ -18,11 +18,11 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-12">
-                        <label for="name" class="form-label">Name:</label>
-                        <input type="text" id="name" class="form-control" v-model="course.courseName" :class="{ 'border-danger': $v.courseName.$dirty && $v.courseName.$invalid }">
-                        <div v-if="$v.courseName.$dirty && $v.courseName.required.$invalid" style="color: red">This field is required</div>
-                        <div v-if="$v.courseName.$dirty && $v.courseName.minLength.$invalid" style="color: red">Minimum length is 10</div>
-                        <div v-if="$v.courseName.$dirty && $v.courseName.maxLength.$invalid" style="color: red">Maximum length is 40</div>
+                        <label for="name" class="form-label">Description:</label>
+                        <input type="text" id="name" class="form-control" v-model="location.description" :class="{ 'border-danger': $v.description.$dirty && $v.description.$invalid }">
+                        <div v-if="$v.description.$dirty && $v.description.required.$invalid" style="color: red">This field is required</div>
+                        <div v-if="$v.description.$dirty && $v.description.minLength.$invalid" style="color: red">Minimum length is 10</div>
+                        <div v-if="$v.description.$dirty && $v.description.maxLength.$invalid" style="color: red">Maximum length is 40</div>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
     import { useToast } from 'vue-toastification'
 
     import { onMounted, ref, toRef } from 'vue'
-    import { useCourseStore } from '@/stores/CourseStore';
+    import { useLocationStore } from '@/stores/LocationStore';
 
     // For Validation
     import { useVuelidate } from '@vuelidate/core'
@@ -53,15 +53,15 @@
     const emit = defineEmits(['closeModal'])
 
     const toast = useToast()
-    const course = toRef(props.model)
+    const location = toRef(props.model)
     const isLoading = ref(false)
-    const courseStore = useCourseStore()
+    const locationStore = useLocationStore()
  
     const rules = {
-        code        : { required, minLength: minLength(3),  maxLength: maxLength(6), $autoDirty: true },
-        courseName  : { required, minLength: minLength(10), maxLength:maxLength(40), $autoDirty: true }
+        code        : { required, minLength: minLength(3),  maxLength: maxLength(12), $autoDirty: true },
+        description : { required, minLength: minLength(6), maxLength:maxLength(40), $autoDirty: true }
     }
-    const $v = useVuelidate(rules, course)
+    const $v = useVuelidate(rules, location)
 
 
     function closeModal() {
@@ -81,10 +81,10 @@
         try {
             isLoading.value = true
 
-            if(course.value.id) {
-                await courseStore.update(course.value)
+            if(location.value.id) {
+                await locationStore.update(location.value)
             }
-            else await courseStore.insert(course.value)
+            else await locationStore.insert(location.value)
 
             toast.success("Data update successfuly")
             emit('closeModal', 1)

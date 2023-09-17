@@ -1,33 +1,43 @@
 <template>
     <loading :active='isLoading' :is-full-page="true" />
+    <transition name="fade">
+        <course-dialog v-if="isModalVisible" :model="course" @close-modal="closeModal"></course-dialog>
+    </transition>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-10">
-                <h3>Courses</h3>
-            </div>
-            <div class="col-2">
-                <button type="button" class="btn btn-primary" click="addCourse()">ADD</button>
-            </div>
-        </div>
-        <br/><hr/>
-        <div class="container-fluid justify-content-center">
+
+    <div class="p-2">
+        <nav class="navbar navbar-light bg-light">
             <div class="container">
+                <a class="navbar-brand">Courses</a>
+                <div class="d-flex">
+                    <button type="button" class="btn btn-primary" @click="addCourse">ADD</button>
+                </div>
+            </div>
+        </nav>
+
+        <hr/>
+        <div class="container justify-content-center">
+            <div class="p-1">
                 <div class="row">
-                    <div class="col-md-6" v-for="course in courses" :key="course.id">
+                    <div class="col-12 col-md-4 col-lg-4" v-for="course in courses" :key="course.id">
                         <div class="card mb-2">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-primary fw-bold">{{ course.code }}</span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-secondary" @click="editCourse(course)">edit</button>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <h5 class="card-title text-primary">{{ course.code }}</h5>
-                                        <p class="card-text">{{ course.name }}</p>
+                                        <p class="card-text">{{ course.courseName }}</p>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="d-flex justify-content-end">
-                                        <div class="form-check form-switch col-3">
-                                            <input class="form-check-input" type="checkbox" id="statusDelSwitch" @change="markCourse(item)" v-model="course.status" v-bind:true-value="1" v-bind:false-value="0" >
+                                    <div class="d-flex justify-content-end pt-4">
+                                        <div class="form-check form-switch">
                                             <label class="form-check-label" for="statusDelSwitch">Active ?</label>
+                                            <input class="form-check-input" type="checkbox" id="statusDelSwitch" @change="markCourse(course)" v-model="course.status" v-bind:true-value="1" v-bind:false-value="0" >
                                         </div>
                                     </div>
                                 </div>
@@ -42,39 +52,66 @@
 
 <script setup>
     import { ref, onMounted } from 'vue'
-
+    import { useToast } from 'vue-toastification'
     import Loading from 'vue-loading-overlay'
+    import Swal from 'sweetalert2'
+
     import { useCourseStore } from '@/stores/CourseStore'
+    
+    import CourseDialog from '@/components/CourseDialog.vue';
+
 
     const courses = ref([])
     const course = ref({})
     const isLoading = ref(false)
+    const isModalVisible = ref(false)
 
+    const toast = useToast()
     const courseStore = useCourseStore()
+    
+
+    function addCourse() {
+        course.value = {}
+        isModalVisible.value = true
+    }
+    function editCourse(model) {
+        course.value = model
+        isModalVisible.value = true
+    }
+    async function markCourse(model) {
+        try {
+            isLoading.value = true
+            await courseStore.mark(model)
+            toast.success("Data update successfuly")
+        }
+        catch(err) {
+            Swal.fire({ icon: 'error', text: err.message })
+        }
+        finally {
+            isLoading.value = false
+            loadCourses()
+        }
+    }
 
     async function loadCourses() {
-        try
-        {
-            debugger;
+        try {
             isLoading.value = true
-            await courseStore.retrieveCourses()
+            await courseStore.retrieveAll()
             courses.value = courseStore.getCourses
         }
         catch(err) {
-            alert(err.message)
+            Swal.fire({ icon: 'error', text: err.message })
         }
         finally {
             isLoading.value = false
         }
     }
-    async function markCourse() {
-        try {
-        }
-        catch(err) {
-        }
-    }
 
-
+    function closeModal(res) {
+        isModalVisible.value = false
+        loadCourses()
+    }    
+    
     onMounted(async() => {
         await loadCourses()
     })

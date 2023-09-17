@@ -5,8 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const useTimetableStore = defineStore('TimetableStore', {
     state: () => ({
-        timetable: [],
-        colorCodes: ['#46d896','#9946d8','#46a5d8','#d8a846','#46d85c','#d86546','#d846bf']
+        timetable: []
     }),
     getters: {
         getTimetableEvents: (state) => {
@@ -14,11 +13,11 @@ export const useTimetableStore = defineStore('TimetableStore', {
             state.timetable.forEach(x => {
                 let event = {
                     id: x.id,
-                    start: "2023-08-01T" + x.classStart,
-                    end: "2023-08-01T" + x.classEnd,
+                    start: "2023-08-01T" + x.startTime,
+                    end: "2023-08-01T" + x.endTime,
                     resource: String(x.classDay),
                     text: x.subjectName,
-                    barColor: state.colorCodes[Math.floor(Math.random() * 7)]
+                    barColor: '#46d896'
                 }
                 eventArray.push(event)
             })
@@ -27,7 +26,7 @@ export const useTimetableStore = defineStore('TimetableStore', {
         }
     },
     actions: {
-        async retrieveTimetableByCourse(courseId) {
+        async retrieveByCourse(courseId) {
             await axios.get(`${API_URL}/timetable/course/${courseId}`)
                 .then(res => {
                     this.timetable = res.data
