@@ -1,10 +1,12 @@
 <template>
     <div class="overlay">
         <div class="modal-display">
-            <loading :active='isLoading' :is-full-page="false" />
+            <loading :active='isLoading' :is-full-page='false' />
 
-            <h5 v-if="course.id == null">Add Course</h5>
-            <h5 v-else>Edit Course</h5>
+            <div class="text-center">
+                <h5 v-if="course.id == null">Add Course</h5>
+                <h5 v-else>Edit Course</h5>
+            </div>
 
             <div class="container-fluid p-3">
                 <div class="row mb-3">
@@ -28,9 +30,9 @@
             </div>
             <div class="row">
                 <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary" @click="closeModal()">Close</button>
+                    <button type="button" class="btn btn-secondary" @click="closeDialog">Close</button>
                     &nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" @click="saveModal()">Save</button>
+                    <button type="button" class="btn btn-primary" @click="saveDialog">Save</button>
                 </div>
             </div>
         </div>
@@ -50,11 +52,11 @@
     import { required, maxLength, minLength } from '@vuelidate/validators'
 
     const props = defineProps(['model'])
-    const emit = defineEmits(['closeModal'])
+    const emit = defineEmits(['dialogClosed'])
 
-    const toast = useToast()
     const course = toRef(props.model)
     const isLoading = ref(false)
+    const toast = useToast()
     const courseStore = useCourseStore()
  
     const rules = {
@@ -64,10 +66,10 @@
     const $v = useVuelidate(rules, course)
 
 
-    function closeModal() {
-        emit('closeModal', 0)
+    function closeDialog() {
+        emit('dialogClosed')
     }
-    async function saveModal() {
+    async function saveDialog() {
         const isFormCorrect = await $v.value.$validate()
         if (!isFormCorrect) {
             Swal.fire({
@@ -87,7 +89,7 @@
             else await courseStore.insert(course.value)
 
             toast.success("Data update successfuly")
-            emit('closeModal', 1)
+            emit('dialogClosed', 1)
         }
         catch(err) {
             Swal.fire({ icon: 'error', text: err.message  })

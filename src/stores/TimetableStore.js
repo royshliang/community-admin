@@ -12,12 +12,18 @@ export const useTimetableStore = defineStore('TimetableStore', {
             let eventArray = [];
             state.timetable.forEach(x => {
                 let event = {
-                    id: x.id,
-                    start: "2023-08-01T" + x.startTime,
-                    end: "2023-08-01T" + x.endTime,
-                    resource: String(x.classDay),
-                    text: x.subjectName,
-                    barColor: '#46d896'
+                    id          : x.id,
+                    text        : x.subjectName,
+                    start       : "2023-08-01T" + x.startTime,
+                    end         : "2023-08-01T" + x.endTime,
+                    resource    : String(x.classDay),
+                    barColor    : x.color,
+                    fontColor   : x.color,
+                    // --- custom data for event
+                    status      : x.status,
+                    subjectId   : x.subjectId,
+                    locationId  : x.locationId,
+                    locationCode: x.locationCode,
                 }
                 eventArray.push(event)
             })
@@ -45,6 +51,15 @@ export const useTimetableStore = defineStore('TimetableStore', {
                 })
         },
         async update(model) {
+            await axios.put(`${API_URL}/timetable`, model)
+                .then(res => {
+                    return res.changedRows
+                })
+                .catch(err => {
+                    throw err
+                })
+        },
+        async mark(model) {
             await axios.put(`${API_URL}/timetable`, model)
                 .then(res => {
                     return res.changedRows

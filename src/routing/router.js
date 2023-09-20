@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
+import { useAuthStore } from "@/stores/AuthStore"
 
+import LoginPage      from '@/pages/LoginPage.vue'
 import UserPage       from '@/pages/UserPage.vue'
 import LocationPage   from '@/pages/LocationPage.vue'
 import CoursePage     from "@/pages/CoursePage.vue"
@@ -13,7 +15,12 @@ const router = new createRouter({
 	routes: [
         {
             path: '/',
-            redirect: '/course',
+            redirect: '/login',
+        },
+        {
+            path: '/login',
+            name: 'Login',
+            component: LoginPage
         },
         {
             path: '/course',
@@ -53,20 +60,17 @@ const router = new createRouter({
 	],
 })
 
-export default router
 
 // ----- security authentication
-// import useAuthStore from "@/stores/AuthStore"
-// router.beforeEach(async (to) => {
-// 	debugger
+router.beforeEach(to => {
+    const authStore = useAuthStore()
 
-// 	if (to.fullPath != "/login") {
-// 		if (to.fullPath == "/company" || to.fullPath == "/grade") {
-// 			const authStore = useAuthStore()
+	if (to.fullPath != "/login") {
+		if (!authStore.getUser) {
+            return "/login"
+		}
+	}
+})
 
-// 			if (!authStore.isUserLoggedIn) {
-// 				await router.push("/login")
-// 			}
-// 		}
-// 	}
-// })
+
+export default router

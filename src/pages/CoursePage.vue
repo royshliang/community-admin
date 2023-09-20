@@ -1,9 +1,8 @@
 <template>
     <loading :active='isLoading' :is-full-page="true" />
     <transition name="fade">
-        <course-dialog v-if="isModalVisible" :model="course" @close-modal="closeModal"></course-dialog>
+        <course-dialog v-if="isDialogVisible" :model="course" @dialog-closed="dialogClosed"></course-dialog>
     </transition>
-
 
     <div class="p-2">
         <nav class="navbar navbar-light bg-light">
@@ -14,7 +13,6 @@
                 </div>
             </div>
         </nav>
-
         <hr/>
         <div class="container justify-content-center">
             <div class="p-1">
@@ -64,7 +62,7 @@
     const courses = ref([])
     const course = ref({})
     const isLoading = ref(false)
-    const isModalVisible = ref(false)
+    const isDialogVisible = ref(false)
 
     const toast = useToast()
     const courseStore = useCourseStore()
@@ -72,11 +70,11 @@
 
     function addCourse() {
         course.value = {}
-        isModalVisible.value = true
+        isDialogVisible.value = true
     }
     function editCourse(model) {
         course.value = model
-        isModalVisible.value = true
+        isDialogVisible.value = true
     }
     async function markCourse(model) {
         try {
@@ -107,8 +105,8 @@
         }
     }
 
-    function closeModal(res) {
-        isModalVisible.value = false
+    function dialogClosed() {
+        isDialogVisible.value = false
         loadCourses()
     }    
     

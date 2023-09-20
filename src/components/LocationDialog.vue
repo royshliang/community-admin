@@ -28,9 +28,9 @@
             </div>
             <div class="row">
                 <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-secondary" @click="closeModal()">Close</button>
+                    <button type="button" class="btn btn-secondary" @click="closeDialog()">Close</button>
                     &nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" @click="saveModal()">Save</button>
+                    <button type="button" class="btn btn-primary" @click="saveDialog()">Save</button>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
     import { required, maxLength, minLength } from '@vuelidate/validators'
 
     const props = defineProps(['model'])
-    const emit = defineEmits(['closeModal'])
+    const emit = defineEmits(['dialogClosed'])
 
     const toast = useToast()
     const location = toRef(props.model)
@@ -64,10 +64,10 @@
     const $v = useVuelidate(rules, location)
 
 
-    function closeModal() {
-        emit('closeModal', 0)
+    function closeDialog() {
+        emit('dialogClosed', 0)
     }
-    async function saveModal() {
+    async function saveDialog() {
         const isFormCorrect = await $v.value.$validate()
         if (!isFormCorrect) {
             Swal.fire({
@@ -87,7 +87,7 @@
             else await locationStore.insert(location.value)
 
             toast.success("Data update successfuly")
-            emit('closeModal', 1)
+            emit('dialogClosed', 1)
         }
         catch(err) {
             Swal.fire({ icon: 'error', text: err.message  })

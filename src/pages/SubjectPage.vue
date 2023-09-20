@@ -1,7 +1,7 @@
 <template>
     <loading :active='isLoading' :is-full-page="true" />
     <transition name="fade">
-        <subject-dialog v-if="isModalVisible" :model="subject" :courses="courses" @close-modal="closeModal"></subject-dialog>
+        <subject-dialog v-if="isModalVisible" :model="subject" :courses="courses" @dialog-closed="closeDialog"></subject-dialog>
     </transition>
 
     <div class="p-2">
@@ -32,7 +32,7 @@
                         <th scope="col">
                             Subject
                         </th>
-                        <th scope="col">
+                        <th scope="col" class="d-none d-md-table-cell">
                             Course
                         </th>
                         <th scope="col">
@@ -50,7 +50,7 @@
                         <td scope="col">
                             {{ sub.subjectName }}
                         </td>
-                        <td scope="col">
+                        <td scope="col" class="d-none d-md-table-cell">
                             {{ sub.courseName }}
                         </td>
                         <td>
@@ -145,7 +145,7 @@
         }
     }
 
-    function closeModal(res) {
+    function closeDialog(res) {
         isModalVisible.value = false
         loadSujects(selectedCourse.value)
     }

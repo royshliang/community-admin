@@ -3,41 +3,62 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page="false" />
 
-            <!-- <h5 v-if="newVoucher">Assign Voucher:</h5>
-            <h5 v-else="!newVoucher">Edit Voucher:</h5> -->
+            <h5 v-if="timetable.id < 0">Create event:</h5>
+            <h5 v-else>Edit event:</h5>
 
             <div class="container p-3">
                 <div class="row mb-3">
                     <div class="card p-2">
                         <div class="card-body">
                             <div class="row info">
-                                <div class="col-6">
-                                    <label for="day" class="form-label">Day</label>
-                                    <input id="day" class="form-control text-center" v-model="timetable.classDay" readonly disabled>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label for="day" class="form-label">Day</label>
+                                        <!-- <input id="day" class="form-control text-center" v-model="timetable.classDay" readonly disabled> -->
+                                        <input id="day" class="form-control text-center fw-bold" :value="formatDayName(timetable.classDay)" readonly disabled>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="classtart" class="form-label">Start</label>
+                                        <input id="day" class="form-control text-center fw-bold" :value="formatClassTime(timetable.startTime)" readonly disabled>
+                                        <!-- <div id="classstart" class="form-control text-center" readonly disabled>{{ formatClassTime(timetable.startTime) }}</div> -->
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="classend" class="form-label">End</label>
+                                        <input id="day" class="form-control text-center fw-bold" :value="formatClassTime(timetable.endTime) " readonly disabled>
+                                        <!-- <div id="classend" class="form-control text-center" readonly disabled>{{ formatClassTime(timetable.endTime) }}</div> -->
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <label for="classtart" class="form-label">Start</label>
-                                    <div id="classstart" class="form-control" readonly disabled>{{ formatClassTime(timetable.startTime) }}</div>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="subject" class="form-label">Subject</label>
+                                        <select id="subject" v-model="timetable.subjectId" class="form-select">
+                                            <option v-if="timetable.subjectId <= 0" value="-1" selected disabled>Please select a subject</option>
+                                            <option v-for="(sub, key, index) in subjectList" :key="sub.id" :value="sub.subjectId">{{ sub.subjectName }}</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <label for="classend" class="form-label">End</label>
-                                    <div id="classend" class="form-control" readonly disabled>{{ formatClassTime(timetable.endTime) }}</div>
-                                </div>
-                                <div class="col-12">
-                                    <label for="subject" class="form-label">Subject</label>
-                                    <select id="subject" v-model="timetable.subjectId" class="form-select">
-                                        <option v-for="(opt, index) in subjects" :key="index" :value="opt.subjectId">{{ opt.subjectName }}</option>
-                                    </select>
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="location" class="form-label">Location</label>
+                                        <select id="location" v-model="timetable.locationId" class="form-select">
+                                            <option v-if="timetable.locationId <= 0" value="-1" selected disabled>Please select a location</option>
+                                            <option v-for="loc in locationList" :key="loc.id" :value="loc.id">
+                                                <span class="fw-bold">{{ loc.code }}</span>-<span>loc.description</span>
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <button type="button" class="btn-green" @click="close(0)">Cancel</button>
-                    &nbsp;
-                    <button type="button" class="btn-green" @click="close(1)">Save</button>
+                <div class="row">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary" @click="closeDialog">Close</button>
+                        &nbsp;&nbsp;
+                        <button type="button" class="btn btn-primary" @click="saveDialog">Save</button>
+                    </div>
                 </div>
             </div>
 
@@ -47,72 +68,31 @@
 
 
 <script setup>
-    import { ref, onMounted, onUnmounted, computed, toRef } from 'vue'
-    import { useSubjectStore } from '@/stores/SubjectStore'
-    import Swal from 'sweetalert2'
+    import { ref, toRef } from 'vue'
     import Loading from 'vue-loading-overlay'
 
-    const props = defineProps(['model', 'course'])
-    const emit = defineEmits(['closeDialog'])
+    const emit = defineEmits(['dialogClosed'])
+    const props = defineProps(['model', 'subjectList', 'locationList'])
 
-    const subjectStore = useSubjectStore()
-
-    const subjects = ref([])
     const timetable = toRef(props.model)
     const isLoading = ref(false)
 
-    async function loadSubjects(courseId) {
-        try {
-            isLoading.value = true
-            await subjectStore.retrieveByCourse(courseId)
-            subjects.value = subjectStore.getActiveSubjects
-        }
-        catch(err) {
-            Swal.fire({ icon: 'error', text: err.message })
-        }
-        finally {
-            isLoading.value = false
-        }
-    }
+    const dayNameList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+
     function formatClassTime(val) {
-         return val.split("T")[1]
+        return val.split("T")[1]
     }
-    function close() {
-        emit('closeDialog', timetable.value)
+    function formatDayName(val) {
+        return dayNameList[val-1]
     }
 
-
-    onMounted(async () => {
-        await loadSubjects(props.course)
-    })
-</script>
-
-<script>
-    // import { ref, onMounted, onUnmounted, computed } from 'vue'
-    // import Loading from 'vue-loading-overlay'
-
-    // const props = defineProps({
-    //     model:      { type: Object },
-    //     subjects:   { type: Array }
-    // })
-    // const emits = defineEmits(['close'])
-
-    // const isLoading = ref(false)
-    // const timetable = ref(props.model)
-    // const isProcessing = ref(false)
-
-
-    // function formatClassTime(val) {
-    //     debugger;
-    //     return val.split("T")[1]
-    // }
-    // function close(opt) {
-    //     debugger;
-    //     emits('close', opt == 1 ? timetable.value: null)
-    // }
-
-    // onMounted(async () => {
-    // })
+    function closeDialog() {
+        emit('dialogClosed', 0)
+    }
+    function saveDialog() {
+        emit('dialogClosed', timetable.value)
+    }
 </script>
 
 <style scoped>

@@ -4,7 +4,6 @@
         <user-dialog v-if="isModalVisible" :model="user" @close-modal="closeModal"></user-dialog>
     </transition>
 
-
     <div class="p-2">
         <nav class="navbar navbar-light bg-light">
             <div class="container">

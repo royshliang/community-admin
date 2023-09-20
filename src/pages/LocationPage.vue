@@ -1,7 +1,7 @@
 <template>
     <loading :active='isLoading' :is-full-page="true" />
     <transition name="fade">
-        <location-dialog v-if="isModalVisible" :model="location" @close-modal="closeModal"></location-dialog>
+        <location-dialog v-if="isDialogVisible" :model="location" @dialog-closed="dialogClosed"></location-dialog>
     </transition>
 
 
@@ -71,7 +71,7 @@
     const locations = ref([])
     const location = ref({})
     const isLoading = ref(false)
-    const isModalVisible = ref(false)
+    const isDialogVisible = ref(false)
 
     const toast = useToast()
     const locationStore = useLocationStore()
@@ -79,11 +79,11 @@
 
     function addLocation() {
         location.value = {}
-        isModalVisible.value = true
+        isDialogVisible.value = true
     }
     function editLocation(model) {
         location.value = model
-        isModalVisible.value = true
+        isDialogVisible.value = true
     }
     async function markLocation(model) {
         try {
@@ -99,7 +99,6 @@
             loadLocations()
         }
     }
-
     async function loadLocations() {
         try {
             isLoading.value = true
@@ -114,8 +113,8 @@
         }
     }
 
-    function closeModal(res) {
-        isModalVisible.value = false
+    function dialogClosed(res) {
+        isDialogVisible.value = false
         loadLocations()
     }    
     
