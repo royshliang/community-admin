@@ -3,7 +3,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand text-warning" href="#">
-                    Scheduler <span class="fs-6">0.5.2</span>
+                    Scheduler <span class="fs-6">0.5.3</span>
                 </a>
                 <div v-if="authStore.getUser != null">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

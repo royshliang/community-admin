@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router"
 import { useAuthStore } from "@/stores/AuthStore"
 
 import LoginPage      from '@/pages/LoginPage.vue'
