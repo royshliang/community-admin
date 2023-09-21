@@ -3,8 +3,10 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page="false" />
 
-            <h5 v-if="subject.id == null">Add</h5>
-            <h5 v-else>Edit</h5>
+            <div class="col-12 text-center bg-dark text-light">
+                <h5 v-if="subject.id == null">Add</h5>
+                <h5 v-else>Edit</h5>
+            </div>
 
             <div class="container-fluid p-3">
                 <!-- Code & Type -->
@@ -44,7 +46,7 @@
                         <div class="row mb-3">
                             <div class="col-12">
                                 <label class="form-label" for="courseid">Label Color</label>
-                                <color-picker id="colorpicker" v-model:pureColor ="subject.color" format="hex" disable-history="true" disable-alpha="true" use-type="pure" is-widget="true"/>
+                                <color-picker id="colorpicker" v-model:pureColor ="subject.color" format="hex" :disable-history="true" :disable-alpha="true" use-type="pure" :is-widget="true"/>
                             </div>
                         </div>
                     </div>

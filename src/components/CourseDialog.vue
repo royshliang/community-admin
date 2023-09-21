@@ -3,7 +3,7 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page='false' />
 
-            <div class="text-center">
+            <div class="col-12 text-center bg-dark text-light">
                 <h5 v-if="course.id == null">Add Course</h5>
                 <h5 v-else>Edit Course</h5>
             </div>

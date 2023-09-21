@@ -21,8 +21,11 @@ export const useAuthStore = defineStore('AuthStore', {
                 .then(res => {
                     if(res.data) {
                         this.user = res.data
-                        window.localStorage.setItem(AUTH_KEY, JSON.stringify(res.data)) // caching logic
+                        localStorage.setItem(AUTH_KEY, JSON.stringify(res.data)) // caching logic
                     }
+                })
+                .then(data => {
+                    
                 })
                 .catch(err => {
                     throw err

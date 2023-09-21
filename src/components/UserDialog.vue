@@ -3,8 +3,10 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page="false" />
 
-            <h5 v-if="user.id == null">Add User</h5>
-            <h5 v-else>Edit User</h5>
+            <div class="col-12 text-center bg-dark text-light">
+                <h5 v-if="user.id == null">Add User</h5>
+                <h5 v-else>Edit User</h5>
+            </div>
 
             <div class="container-fluid p-3">
                 <div class="row mb-3">

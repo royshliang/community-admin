@@ -12,6 +12,7 @@ export const useTimetableStore = defineStore('TimetableStore', {
             let eventArray = [];
             state.timetable.forEach(x => {
                 let event = {
+                    // standard daypilot data for event
                     id          : x.id,
                     text        : x.subjectName,
                     start       : "2023-08-01T" + x.startTime,
@@ -41,6 +42,7 @@ export const useTimetableStore = defineStore('TimetableStore', {
                     throw err
                 })
         },
+        
         async insert(model) {
             await axios.post(`${API_URL}/timetable`, model)
                 .then(res => {

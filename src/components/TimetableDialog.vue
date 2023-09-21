@@ -3,8 +3,10 @@
         <div class="modal-display">
             <loading :active='isLoading' :is-full-page="false" />
 
-            <h5 v-if="timetable.id < 0">Create event:</h5>
-            <h5 v-else>Edit event:</h5>
+            <div class="col-12 text-center bg-dark text-light">
+                <h5 v-if="timetable.id < 0">Add Event</h5>
+                <h5 v-else>Edit event:</h5>
+            </div>
 
             <div class="container p-3">
                 <div class="row mb-3">

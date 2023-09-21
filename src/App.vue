@@ -44,7 +44,7 @@
                             </li>
                         </ul>
                         <ul class="d-flex mb-2 mb-lg-0">
-                            <button type="button" class="btn btn-lg text-primary" @click="logout">Logout</button>
+                            <button type="button" class="btn btn-sm text-primary border border-primary" @click="logout">Logout</button>
                         </ul>
                     </div>
                 </div>
