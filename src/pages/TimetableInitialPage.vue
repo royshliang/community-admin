@@ -1,8 +1,11 @@
 <template>
     <loading :active='isLoading' :is-full-page="true" />
+
+    <!-- 
     <transition name="fade">
         <timetable-dialog v-if="showDialog" :model="timetable" :subject-list="subjects" :location-list="locations" @dialog-closed="dialogClosed"></timetable-dialog>
-    </transition>
+    </transition> 
+    -->
 
     <div class="p-2">
         <nav class="navbar navbar-light bg-light">
@@ -28,9 +31,7 @@
 
     import Swal from 'sweetalert2'
     import Loading from 'vue-loading-overlay'
-    import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
-
-    import TimetableDialog from '@/components/TimetableDialog.vue'
+    import { DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
     import { useTimetableStore } from '@/stores/TimetableStore'
     import { useSubjectStore }   from '@/stores/SubjectStore'
@@ -64,9 +65,6 @@
         heightSpec: "BusinessHoursNoScroll",
 
         cellHeight: 20,
-        // eventDeleteHandling       : "Update",
-        // eventResizeHandling       : "Disabled",
-        // timeRangeSelectedHandling : "Enabled",
         eventMoveHandling: false,
         eventResizeHandling: false,
         eventRightClickHandling: false,
@@ -78,134 +76,10 @@
             { name: "Wednesday", id: "3" },
             { name: "Thursday",  id: "4" },
             { name: "Friday",    id: "5" },
-        ],
-
-        // ----- 2. calendar events
-        // onTimeRangeSelected: async (args) => {
-        //     timetable.value = { 
-        //         id          : -1, 
-        //         subjectId   : -1,
-        //         locationId  : -1,
-        //         classDay    : args.resource, 
-        //         startTime   : args.start.toLocaleString(), 
-        //         endTime     : args.end.toLocaleString() 
-        //     }
-        //     showDialog.value = true;
-        // },
-        // onEventMoved: async (args) => {
-        //     await updateEvent(args.start, args.end, args.resoure)
-        // },
-        // onEventDeleted: async (args) => {
-        //     await postDeleteEvent(args.resource)
-        // },
-
-        // onBeforeEventRender: args => {
-        //     args.data.areas = []
-        //     args.data.areas.push({ 
-        //         html: `<span class='text-primary fw-bold'>${args.data.locationCode}</span>`,
-        //         right: 2,
-        //         bottom: 2
-        //     })
-
-        //     if(args.data.status == 0) {
-        //         args.data.backColor = "#ffc0c0";
-        //         args.data.areas.push({ html: '<h6 class="text-danger">** Cancelled **</h6>', left: 1, bottom: 1})
-        //     }
-        // },
-
-        // // ------ 3. calendar context menu
-        // contextMenu: new DayPilot.Menu({
-        //     items: [
-        //         {
-        //             text: "Edit", 
-        //             onClick: args => editEvent(args.source) 
-        //         },
-        //         {
-        //             text: "Cancel", 
-        //             onClick: args => postMarkEvent(args.source) 
-        //         }
-        //     ],
-        //     onShow: args => {
-        //         const e = args.source;
-        //         args.menu.items[1].text = e.data.status == 0 ? "Reset" : "Cancel"
-        //     }
-        // })
+        ]
     })
 
 
-    // function editEvent(e) {
-    //     timetable.value = {
-    //         id          : e.data.id, 
-    //         subjectId   : e.data.subjectId,
-    //         locationId  : e.data.locationId,
-    //         status      : e.status,
-    //         classDay    : e.data.resource, 
-    //         startTime   : e.data.start.toLocaleString(), 
-    //         endTime     : e.data.end.toLocaleString() 
-    //     }
-
-    //     showDialog.value = true
-    // }
-
-    // async function postMarkEvent(timetable) {
-    //     try {
-    //         isLoading.value = true
-    //         await timetableStore.mark(timetable)
-
-    //         loadEvents(selectedCourse.value)
-    //     }
-    //     catch(err) {
-
-    //     }
-    //     finally {
-    //         isLoading.value = false
-    //     }
-    // }
-    // async function postCreateEvent(timetable) {
-    //     try {
-    //         isLoading.value = true
-    //         await timetableStore.insert(timetable)
-
-    //         loadEvents(selectedCourse.value)
-    //     }
-    //     catch(err) {
-    //         alert(err.message)
-    //     }
-    //     finally {
-    //         isLoading.value = false
-    //     }
-    // }
-    // async function postUpdateEvent(start, end, resorce) {
-    //     try {
-    //         isLoading.value = true
-    //         await timetableStore.update(timetable)
-
-    //         loadEvents(selectedCourse.value)
-    //     }
-    //     catch(err) {
-    //         alert(err.message)
-    //     }
-    //     finally {
-    //         isLoading.value = false
-    //     }
-    // }
-    // async function postDeleteEvent(resource) {
-    //     try {
-    //         isLoading.value = true
-    //         await timetableStore.delete(timetable)
-
-    //         loadEvents(selectedCourse.value)
-    //     }
-    //     catch(err) {
-    //         alert(err.message)
-    //     }
-    //     finally {
-    //         isLoading.value = false
-    //     }
-    // }
-
-
-    // ---
     async function loadCourses() {
         try {
             isLoading.value = true
@@ -238,8 +112,6 @@
             await timetableStore.retrieveByCourse(courseId)
             let events = timetableStore.getTimetableEvents
 
-            debugger;
-
             calendar.value.control.update({events})
         }
         catch(err) {
@@ -261,17 +133,6 @@
         finally {
             isLoading.value = false
         }
-    }
-
-
-    async function dialogClosed(model) {
-        showDialog.value = false;
-
-        if(model) {
-            await createEvent(model)
-        }
-
-        calendar.value.control.clearSelection()
     }
 
     watch(selectedCourse, async (n, o) => {

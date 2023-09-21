@@ -43,8 +43,8 @@ export const useTimetableStore = defineStore('TimetableStore', {
                 })
         },
         
-        async insert(model) {
-            await axios.post(`${API_URL}/timetable`, model)
+        async insert(vm) {
+            await axios.post(`${API_URL}/timetable`, vm)
                 .then(res => {
                     return res.affectedRows
                 })
@@ -52,8 +52,10 @@ export const useTimetableStore = defineStore('TimetableStore', {
                     throw err
                 })
         },
-        async update(model) {
-            await axios.put(`${API_URL}/timetable`, model)
+        async update(vm) {
+            debugger;
+
+            await axios.put(`${API_URL}/timetable`, vm)
                 .then(res => {
                     return res.changedRows
                 })
@@ -61,8 +63,8 @@ export const useTimetableStore = defineStore('TimetableStore', {
                     throw err
                 })
         },
-        async mark(model) {
-            await axios.put(`${API_URL}/timetable`, model)
+        async mark(vm) {
+            await axios.put(`${API_URL}/timetable`, vm)
                 .then(res => {
                     return res.changedRows
                 })
@@ -70,9 +72,12 @@ export const useTimetableStore = defineStore('TimetableStore', {
                     throw err
                 })
         },
-        async delete(resource) {
-            await axios.delete(`${API_URL}/timetable`)
+        async delete(vm) {
+            debugger;
+
+            await axios.delete(`${API_URL}/timetable`, { data: vm })
                 .then(res => {
+                    debugger;
                     return res.affectedRows
                 })
                 .catch(err => {
