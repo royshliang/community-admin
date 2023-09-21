@@ -11,7 +11,7 @@ import TimetablePage  from "@/pages/TimetablePage.vue"
 import EventtablePage from "@/pages/EventtablePage.vue"
 
 const router = new createRouter({
-	history: createWebHistory(),
+	history: createWebHashHistory(),
 	routes: [
         {
             path: '/',
