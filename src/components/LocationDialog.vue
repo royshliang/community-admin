@@ -67,7 +67,7 @@
 
 
     function closeDialog() {
-        emit('dialogClosed', 0)
+        emit('dialogClosed')
     }
     async function saveDialog() {
         const isFormCorrect = await $v.value.$validate()
@@ -89,7 +89,7 @@
             else await locationStore.insert(location.value)
 
             toast.success("Data update successfuly")
-            emit('dialogClosed', 1)
+            emit('dialogClosed')
         }
         catch(err) {
             Swal.fire({ icon: 'error', text: err.message  })

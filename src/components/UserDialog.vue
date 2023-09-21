@@ -78,7 +78,7 @@
 
 
     function closeModal() {
-        emit('closeModal', 0)
+        emit('closeModal')
     }
     async function saveModal() {
         const isFormCorrect = await $v.value.$validate()
@@ -100,7 +100,7 @@
             else await userStore.insert(user.value)
 
             toast.success("Data update successfuly")
-            emit('closeModal', 1)
+            emit('closeModal')
         }
         catch(err) {
             Swal.fire({ icon: 'error', text: err.message  })

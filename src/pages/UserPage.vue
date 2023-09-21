@@ -125,7 +125,7 @@
         }
     }
 
-    function closeModal(res) {
+    function closeModal() {
         isModalVisible.value = false
         loadUsers()
     }    

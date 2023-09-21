@@ -69,7 +69,7 @@
     import Loading from 'vue-loading-overlay'
     import { useToast, POSITION } from 'vue-toastification'
 
-    import { onMounted, ref, toRef, watch } from 'vue'
+    import { onMounted, ref, toRef } from 'vue'
     import { useSubjectStore } from '@/stores/SubjectStore'
 
     import { useVuelidate } from '@vuelidate/core'
@@ -77,10 +77,9 @@
 
     const props = defineProps(['model', 'courses'])
     const emit = defineEmits(['dialogClosed'])
-    const selectedColor = ref('#7986cc')
 
-    const toast = useToast()
     const subject = toRef(props.model)
+    const toast = useToast()
     const isLoading = ref(false)
 
     const subjectStore = useSubjectStore()
@@ -94,7 +93,7 @@
 
 
     function closeDialog() {
-        emit('dialogClosed', 0)
+        emit('dialogClosed')
     }
     async function saveDialog() {
         const isFormCorrect = await $v.value.$validate()
@@ -116,7 +115,7 @@
             else await subjectStore.insert(subject.value)
 
             toast.success("Data update successfuly", { position: POSITION.TOP_CENTER, timeout: 2500})
-            emit('dialogClosed', 1)
+            emit('dialogClosed')
         }
         catch(err) {
             Swal.fire({ icon: 'error', text: err.message  })
@@ -125,10 +124,6 @@
             isLoading.value = false
         }
     }
-
-    watch(selectedColor, (n, o) => {
-        debugger;   
-    })
 
     onMounted(() => {
     });

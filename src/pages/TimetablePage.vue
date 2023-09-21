@@ -29,6 +29,7 @@
     import Swal from 'sweetalert2'
     import Loading from 'vue-loading-overlay'
     import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
+    import { useToast } from 'vue-toastification'
 
     import TimetableDialog from '@/components/TimetableDialog.vue'
 
@@ -42,7 +43,10 @@
     const courseStore = useCourseStore()
     const subjectStore = useSubjectStore()
 
+    const toast = useToast()
+
     const selectedCourse = ref(-1)
+    const isAvailable = ref(false)
     const isDialogVisible = ref(false)
     const isLoading = ref(false)
 
@@ -61,15 +65,14 @@
 
         businessBeginsHour: 0,
         businessEndsHour: 19,
+        cellHeight: 21,
         heightSpec: "BusinessHoursNoScroll",
 
-        cellHeight: 21,
-        eventResizeHandling         : "Disabled",
+        timeRangeSelectedHandling   : "Disabled",
         eventDeleteHandling         : "Enabled",
-        timeRangeSelectedHandling   : "Enabled",
-        eventMoveHandling           : false,
-        eventResizeHandling         : false,
-        eventRightClickHandling     : false,
+        eventResizeHandling         : "Disabled",
+        eventClickHandling          : "Disabled",
+
 
         // ----- 1. calendar columns
         columns: [
@@ -146,11 +149,12 @@
     })
 
 
-
+    // ----- 
     async function postMarkEvent(timetable) {
         try {
             isLoading.value = true
             await timetableStore.mark(timetable)
+            toast.success("Data update successfuly")            
 
             loadEvents(selectedCourse.value)
         }
@@ -167,6 +171,7 @@
         try {
             isLoading.value = true
             await timetableStore.insert(timetable)
+            toast.success("Data update successfuly")
 
             loadEvents(selectedCourse.value)
         }
@@ -178,8 +183,6 @@
         }
     }
     async function postUpdateEvent(newStart, newEnd, newResource, evt) {
-        debugger;
-
         try {
             isLoading.value = true
 
@@ -190,6 +193,7 @@
                 classDay   : newResource
             }
             await timetableStore.update(timetable.value)
+            toast.success("Data update successfuly")
 
             loadEvents(selectedCourse.value)
         }
@@ -206,10 +210,9 @@
         try {
             isLoading.value = true
 
-            timetable.value = {
-                id: evt.id
-            }
+            timetable.value = { id: evt.id }
             await timetableStore.delete(timetable.value)
+            toast.success("Data update successfuly")
 
             loadEvents(selectedCourse.value)
         }
@@ -222,7 +225,7 @@
     }
 
 
-    // ---
+    // -----
     async function loadCourses() {
         try {
             isLoading.value = true
@@ -279,7 +282,7 @@
     }
 
 
-    // ---
+    // -----
     async function dialogClosed(model) {
         isDialogVisible.value = false;
 
@@ -291,6 +294,9 @@
     }
 
     watch(selectedCourse, async (n, o) => {
+        // --- enable calendar component
+        calendar.value.control.timeRangeSelectedHandling = "Enabled"
+
         await loadEvents(n)
         await loadSubjects(n)
     })
@@ -299,6 +305,8 @@
     onMounted(async() => {
         await loadCourses()
         await loadLocations()
+
+        debugger;
     })
 </script>
 

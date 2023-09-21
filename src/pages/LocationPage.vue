@@ -113,7 +113,7 @@
         }
     }
 
-    function dialogClosed(res) {
+    function dialogClosed() {
         isDialogVisible.value = false
         loadLocations()
     }    

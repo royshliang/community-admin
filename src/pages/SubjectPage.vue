@@ -145,7 +145,7 @@
         }
     }
 
-    function closeDialog(res) {
+    function closeDialog() {
         isModalVisible.value = false
         loadSujects(selectedCourse.value)
     }
