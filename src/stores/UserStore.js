@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const useUserStore = defineStore('UserStore', {
     state: () => ({
-        user: {},
+        user: null,
         users: []
     }),
     getters: {
@@ -65,6 +65,18 @@ export const useUserStore = defineStore('UserStore', {
                 .catch(err => {
                     throw err
                 })
+        },
+        authenticate: async function(vm) {
+            await axios.post(`${API_URL}/user/authenticate`, vm)
+                .then(res => {
+                    this.user = res.data
+                })
+                .catch(err => {
+                    throw err
+                })
+        },
+        logout: function() {
+            this.user = null
         }
     }
 })

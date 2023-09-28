@@ -11,6 +11,7 @@ export default defineConfig({
             "@"             : path.resolve(__dirname, "src"),
             "@sweet"        : path.resolve(__dirname, "node_modules/sweetalert2"),
             "@bootstrap"    : path.resolve(__dirname, 'node_modules/bootstrap'),
+            "@vuecolor"     : path.resolve(__dirname, "node_modules/vue3-colorpicker"),
             "@vueloader"    : path.resolve(__dirname, "node_modules/vue-loading-overlay"),
             "@vuetoasty"    : path.resolve(__dirname, "node_modules/vue-toastification"),
         }

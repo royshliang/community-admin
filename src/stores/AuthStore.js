@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL;
-const AUTH_KEY = 'community-auth-key'
+const API_URL = import.meta.env.VITE_API_URL
+const AUTH_KEY = import.meta.env.VITE_AUTH_KEY
 
 export const useAuthStore = defineStore('AuthStore', {
     state: () => ({
@@ -11,29 +11,12 @@ export const useAuthStore = defineStore('AuthStore', {
     }),
     getters: {
         getUser: (state) => {
-            return state.user || JSON.parse(localStorage.getItem(AUTH_KEY))
+            return state.user 
         },
     },
     actions: {
-        authenticate: async function(email, pwd) {
-            this.user = null
-            await axios.post(`${API_URL}/user/authenticate`, {email: email, password: pwd})
-                .then(res => {
-                    if(res.data) {
-                        this.user = res.data
-                        localStorage.setItem(AUTH_KEY, JSON.stringify(res.data)) // caching logic
-                    }
-                })
-                .then(data => {
-                    
-                })
-                .catch(err => {
-                    throw err
-                })
-        },
         logout: function() {
             this.user = null
-            window.localStorage.removeItem(AUTH_KEY)    // caching logic
         }
     }
 })

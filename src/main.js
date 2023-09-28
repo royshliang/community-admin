@@ -8,7 +8,7 @@ import Vue3ColorPicker from "vue3-colorpicker";
 
 import './styles/bootstrap.scss'
 
-import "vue3-colorpicker/style.css";
+import "@vuecolor/style.css";
 import '@sweet/dist/sweetalert2.min.css';
 import '@vueloader/dist/css/index.css'
 import '@vuetoasty/dist/index.css'

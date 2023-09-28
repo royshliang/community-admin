@@ -44,6 +44,7 @@ export const useSubjectStore = defineStore('SubjectStore', {
                     throw err.message
                 })
         },
+        
         mark: async function(vm) {
             await axios.put(`${API_URL}/subject/mark`, vm)
                 .then(res => {

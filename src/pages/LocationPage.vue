@@ -38,7 +38,7 @@
                         <td scope="col" class="text-primary fw-bold">
                             {{ loc.code }}
                         </td>
-                        <td scope="col" class="text-primary col-6">
+                        <td scope="col" class="col-6">
                             {{ loc.description }}
                         </td>
                         <td>
@@ -59,10 +59,11 @@
 
 <script setup>
     import { ref, onMounted } from 'vue'
-    import { useToast } from 'vue-toastification'
+    
     import Loading from 'vue-loading-overlay'
     import Swal from 'sweetalert2'
 
+    import { useToast } from 'vue-toastification'
     import { useLocationStore } from '@/stores/LocationStore'
     
     import LocationDialog from '@/components/LocationDialog.vue';

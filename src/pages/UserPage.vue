@@ -110,7 +110,6 @@
             loadUsers()
         }
     }
-
     async function loadUsers() {
         try {
             isLoading.value = true

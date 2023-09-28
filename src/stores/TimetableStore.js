@@ -28,6 +28,23 @@ export const useTimetableStore = defineStore('TimetableStore', {
                 }
                 eventArray.push(event)
             })
+            // state.timetable.map(x => {
+            //     eventArray.push({
+            //         // standard daypilot data for event
+            //         id          : x.id,
+            //         text        : x.subjectName,
+            //         start       : "2023-08-01T" + x.startTime,
+            //         end         : "2023-08-01T" + x.endTime,
+            //         resource    : String(x.classDay),
+            //         barColor    : x.color,
+            //         fontColor   : x.color,
+            //         // --- custom data for event
+            //         status      : x.status,
+            //         subjectId   : x.subjectId,
+            //         locationId  : x.locationId,
+            //         locationCode: x.locationCode,                    
+            //     })
+            // })
 
             return eventArray;
         }
@@ -53,8 +70,6 @@ export const useTimetableStore = defineStore('TimetableStore', {
                 })
         },
         async update(vm) {
-            debugger;
-
             await axios.put(`${API_URL}/timetable`, vm)
                 .then(res => {
                     return res.changedRows
@@ -73,8 +88,6 @@ export const useTimetableStore = defineStore('TimetableStore', {
                 })
         },
         async delete(vm) {
-            debugger;
-
             await axios.delete(`${API_URL}/timetable`, { data: vm })
                 .then(res => {
                     debugger;

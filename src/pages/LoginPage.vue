@@ -9,14 +9,16 @@
                             alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem; width: 100%; height: 100%;" />
                         </div>
 
-                        <div v-if="!authStore.getUser" class="col-md-6 col-lg-7 d-flex align-items-center">
+                        <div class="col-md-6 col-lg-7 d-flex align-items-center">
                             <loading :active="isLoading" is-full-screen="false"></loading>
 
                             <div class="card-body p-4 p-lg-5 text-black">
-                                <!-- <div class="d-flex align-items-center mb-2 pb-1">
+                                <!-- 
+                                <div class="d-flex align-items-center mb-2 pb-1">
                                     <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219;"></i>
                                     <span class="h1 fw-bold mb-0">Logo</span>
-                                </div> -->
+                                </div> 
+                                -->
 
                                 <h5 class="fw-normal mb-2 pb-2" style="letter-spacing: 1px;">Sign into your account</h5>
 
@@ -41,11 +43,13 @@
                                 <a href="#!" class="small text-muted">Privacy policy</a>
                             </div>
                         </div>
+                        <!--
                         <div v-else class="col-md-6 col-lg-7 d-flex align-items-center">
                             <div class="card-body p-4">
                                 login dy !!!!
                             </div>
-                        </div>
+                        </div> 
+                        -->
                     </div>
                 </div>
             </div>
@@ -58,7 +62,7 @@
     import Swal from 'sweetalert2'
     import { useToast } from 'vue-toastification'
     import { useRouter } from 'vue-router'
-    import { useAuthStore } from '@/stores/AuthStore'
+    import { useUserStore } from '@/stores/UserStore'
     import Loading from 'vue-loading-overlay'
 
     import { useVuelidate } from '@vuelidate/core'
@@ -69,7 +73,7 @@
 
     const toast = useToast()
     const router = useRouter()
-    const authStore = useAuthStore()
+    const userStore = useUserStore()
 
     const rules = {
         email  : { required, email: email, $autoDirty: true },
@@ -90,25 +94,25 @@
 
         try {
             isLoading.value = true
-            await authStore.authenticate(credentials.value.email, credentials.value.pwd)
+            await userStore.authenticate({
+                email: credentials.value.email, 
+                password: credentials.value.pwd
+            })
 
-            if(authStore.getUser != null) {
+            if(userStore.getUser != null) {
                 toast.success("Authentication successful")
                 router.push("/course")
             }
             else {
                 Swal.fire({
-                    icon: 'warning',
+                    icon: 'error',
                     title: 'Authentication Error',
                     text: 'Invalid email/password'
                 })
             }
         }
         catch(err) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Error authenticating',
-            })
+            Swal.fire({ icon: 'warning', title: 'Error authenticating' })
         }
         finally {
             isLoading.value = false
@@ -116,6 +120,8 @@
     }
 
     onMounted(() => {
-        debugger;
+        if(userStore.getUser != null) {
+            router.push("/course")
+        }
     })
 </script>

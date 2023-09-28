@@ -71,21 +71,22 @@
 
 <script setup>
     import { ref, onMounted, watch } from 'vue'
-    import { useToast } from 'vue-toastification'
     import Loading from 'vue-loading-overlay'
     import Swal from 'sweetalert2'
 
+    import { useToast } from 'vue-toastification'
     import { useSubjectStore } from '@/stores/SubjectStore'
     import { useCourseStore } from '@/stores/CourseStore'
 
-    import SubjectDialog from '../components/SubjectDialog.vue'
+    import SubjectDialog from '@/components/SubjectDialog.vue'
+
+    const selectedCourse = ref(-1)
 
     const subject = ref({})
     const subjects = ref([])
     const courses = ref([])
     const isModalVisible = ref(false)
     const isLoading = ref(false)
-    const selectedCourse = ref(-1)
 
     const toast = useToast()
     const courseStore = useCourseStore()
@@ -130,11 +131,11 @@
             isLoading.value = false
         }
     }
-    async function loadSujects(id) {
+    async function loadSujects(courseId) {
         try
         {
             isLoading.value = true
-            await subjectStore.retrieveByCourse(id)
+            await subjectStore.retrieveByCourse(courseId)
             subjects.value = subjectStore.getSubjects
         }
         catch(err) {

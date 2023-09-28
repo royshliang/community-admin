@@ -65,10 +65,8 @@ const router = new createRouter({
 router.beforeEach(to => {
     const authStore = useAuthStore()
 
-	if (to.fullPath != "/login") {
-		if (!authStore.getUser) {
-            return "/login"
-		}
+	if (to.fullPath != "/login" && !authStore.getUser) {
+        return "/login"
 	}
 })
 
