@@ -11,7 +11,7 @@ import EventtablePage from "@/pages/EventtablePage.vue"
 import { useUserStore } from "../stores/UserStore"
 
 const router = new createRouter({
-	history: createWebHashHistory(),
+	history: createWebHistory(),
 	routes: [
         {
             path: '/',

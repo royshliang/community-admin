@@ -3,7 +3,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand text-warning" href="#">
-                    Scheduler <span class="fs-6">0.5.5</span>
+                    Scheduler <span class="fs-6">0.9.9a</span>
                 </a>
                 <div v-if="userStore.getUser != null">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,8 +65,8 @@
     const router = useRouter()
 
     function logout() {
-        authStore.logout()
-        router.push("/")
+        userStore.logout()
+        router.push("/login")
     }
 </script>
 
