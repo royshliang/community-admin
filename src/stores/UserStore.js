@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
+const AUTH_KEY = "community-admin"
 
 export const useUserStore = defineStore('UserStore', {
     state: () => ({
@@ -10,7 +11,7 @@ export const useUserStore = defineStore('UserStore', {
     }),
     getters: {
         getUser: (state) => {
-            return state.user
+            return state.user || JSON.parse(localStorage.getItem(AUTH_KEY))
         },
         getUsers: (state) => {
             return state.users
@@ -70,6 +71,7 @@ export const useUserStore = defineStore('UserStore', {
             await axios.post(`${API_URL}/user/authenticate`, vm)
                 .then(res => {
                     this.user = res.data
+                    localStorage.setItem(AUTH_KEY, JSON.stringify(vm))
                 })
                 .catch(err => {
                     throw err
@@ -77,6 +79,7 @@ export const useUserStore = defineStore('UserStore', {
         },
         logout: function() {
             this.user = null
+            localStorage.removeItem(AUTH_KEY)
         }
     }
 })

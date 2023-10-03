@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, createWebHashHistory } from "vue-router"
-import { useAuthStore } from "@/stores/AuthStore"
 
 import LoginPage      from '@/pages/LoginPage.vue'
 import UserPage       from '@/pages/UserPage.vue'
@@ -9,6 +8,7 @@ import StudentPage    from "@/pages/StudentPage.vue"
 import SubjectPage    from "@/pages/SubjectPage.vue"
 import TimetablePage  from "@/pages/TimetablePage.vue"
 import EventtablePage from "@/pages/EventtablePage.vue"
+import { useUserStore } from "../stores/UserStore"
 
 const router = new createRouter({
 	history: createWebHashHistory(),
@@ -63,9 +63,9 @@ const router = new createRouter({
 
 // ----- security authentication
 router.beforeEach(to => {
-    const authStore = useAuthStore()
+    const userStore = useUserStore()
 
-	if (to.fullPath != "/login" && !authStore.getUser) {
+	if (to.fullPath != "/login" && !userStore.getUser) {
         return "/login"
 	}
 })

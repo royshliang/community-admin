@@ -3,9 +3,9 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand text-warning" href="#">
-                    Scheduler <span class="fs-6">0.5.3</span>
+                    Scheduler <span class="fs-6">0.5.5</span>
                 </a>
-                <div v-if="authStore.getUser != null">
+                <div v-if="userStore.getUser != null">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -59,9 +59,9 @@
 
 <script setup>
     import { useRouter } from 'vue-router'
-    import { useAuthStore } from '@/stores/AuthStore'
+    import { useUserStore } from '@/stores/UserStore'
 
-    const authStore = useAuthStore()
+    const userStore = useUserStore()
     const router = useRouter()
 
     function logout() {
