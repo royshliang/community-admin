@@ -29,7 +29,7 @@ export const useAttendanceStore = defineStore('AttendanceStore', {
         retrieveById: async function(id) {
             await axios.get(`${API_URL}/attendance/id/${id}`)
                 .then(res => {
-                    this.course = res.data
+                    this.attendances = res.data
                 })
                 .catch(err => {
                     throw err
@@ -38,7 +38,7 @@ export const useAttendanceStore = defineStore('AttendanceStore', {
         retrieveBySubject: async function(id) {
             await axios.get(`${API_URL}/attendances/subject/${id}`)
                 .then(res => {
-                    this.courses = res.data
+                    this.attendances = res.data
                 })
                 .catch(err => {
                     throw err

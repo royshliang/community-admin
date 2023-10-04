@@ -8,6 +8,7 @@ import StudentPage    from "@/pages/StudentPage.vue"
 import SubjectPage    from "@/pages/SubjectPage.vue"
 import TimetablePage  from "@/pages/TimetablePage.vue"
 import EventtablePage from "@/pages/EventtablePage.vue"
+import AttendancePage from "@/pages/AttendancePage.vue"
 import { useUserStore } from "../stores/UserStore"
 
 const router = new createRouter({
@@ -51,6 +52,11 @@ const router = new createRouter({
             path: '/timetable',
             name: 'Timetable',
             component: TimetablePage
+        },
+        {
+            path: '/attendance',
+            name: 'Attendance',
+            component: AttendancePage
         },
         {
             path: '/eventtable',
