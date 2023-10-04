@@ -42,6 +42,11 @@
                                     <router-link to="/student">Students</router-link>
                                 </button>
                             </li>
+                            <li class="nav-item">
+                                <button class="nav-link active" id="pills-accounts-tab" data-bs-target="tab" data-bs-toggle="pill" type="button" role="tab" aria-controls="pills-student" aria-selected="true">
+                                    <router-link to="/attendance">Attendances</router-link>
+                                </button>
+                            </li>                            
                         </ul>
                         <ul class="d-flex mb-2 mb-lg-0">
                             <button type="button" class="btn btn-sm text-primary border border-primary" @click="logout">Logout</button>
