@@ -93,6 +93,12 @@
         emit('dialogClosed', 0)
     }
     function saveDialog() {
+        debugger;
+
+        timetable.value.locationCode = props.locationList.find(x => x.id == timetable.value.locationId)?.code;
+        timetable.value.locationName = props.locationList.find(x => x.id == timetable.value.locationId)?.description;
+        timetable.value.subjectName = props.subjectList.find(x => x.subjectId == timetable.value.subjectId)?.subjectName;
+
         emit('dialogClosed', timetable.value)
     }
 </script>

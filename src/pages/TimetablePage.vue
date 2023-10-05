@@ -97,11 +97,19 @@
         },
         onEventMoved: async (args) => {
             debugger;
-            await postUpdateEvent(args.newStart, args.newEnd, args.newResource, args.e.data)
+            await postCreateUpdateEvent(args.newStart, args.newEnd, args.newResource, args.e.data)
         },
         onEventDeleted: async (args) => {
-            debugger;
-            await postDeleteEvent(args.e.data)
+            Swal.fire({
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+            })
+            .then(async (result) => {
+                if (result.isConfirmed) {
+                    await postDeleteEvent(args.e.data)
+                }
+            })
         },
 
         onBeforeEventRender: args => {
@@ -125,13 +133,13 @@
                     text: "Edit", 
                     onClick: e => {
                         timetable.value = {
-                            id          : e.data.id, 
-                            subjectId   : e.data.subjectId,
-                            locationId  : e.data.locationId,
-                            status      : e.status,
-                            classDay    : e.data.resource, 
-                            startTime   : e.data.start.toLocaleString(), 
-                            endTime     : e.data.end.toLocaleString() 
+                            id          : e.source.data.id, 
+                            subjectId   : e.source.data.subjectId,
+                            locationId  : e.source.data.locationId,
+                            status      : e.source.status,
+                            classDay    : e.source.data.resource, 
+                            startTime   : e.source.data.start.toLocaleString(), 
+                            endTime     : e.source.data.end.toLocaleString() 
                         }
                         isDialogVisible.value = true
                     }
@@ -150,10 +158,12 @@
 
 
     // ----- 
-    async function postMarkEvent(timetable) {
+    async function postMarkEvent(model) {
+        debugger;
+
         try {
             isLoading.value = true
-            await timetableStore.mark(timetable)
+            await timetableStore.mark(model)
             toast.success("Data update successfuly")
 
             loadEvents(selectedCourse.value)
@@ -165,44 +175,17 @@
             isLoading.value = false
         }
     }
-    async function postCreateEvent(timetable) {
+    async function postCreateUpdateEvent(model) {
         debugger;
 
         try {
             isLoading.value = true
 
-            let newTimetable = {
-                id         : evt.id,
-                subjectName: evt.text,
-                startTime  : newStart.value,
-                endTime    : newEnd.value,
-                classDay   : newResource
+            if(model.id <= 0) {
+                await timetableStore.insert(model)
             }
-            await timetableStore.insert(newTimetable)
-            toast.success("Data update successfuly")
+            else await timetableStore.update(model)
 
-            loadEvents(selectedCourse.value)
-        }
-        catch(err) {
-            Swal.fire({ icon: 'error', text: err.message })
-        }
-        finally {
-            isLoading.value = false
-        }
-    }
-    async function postUpdateEvent(newStart, newEnd, newResource, evt) {
-        debugger;
-        try {
-            isLoading.value = true
-
-            let newTimetable = {
-                id         : evt.id,
-                subjectName: evt.text,
-                startTime  : newStart.value,
-                endTime    : newEnd.value,
-                classDay   : newResource
-            }
-            await timetableStore.update(newTimetable)
             toast.success("Data update successfuly")
 
             loadEvents(selectedCourse.value)
@@ -220,7 +203,16 @@
         try {
             isLoading.value = true
 
-            timetable.value = { id: evt.id }
+            timetable.value = {
+                id: evt.id,
+                classDay: evt.resource,
+                startTime: evt.start.value,
+                endTime: evt.end.value,
+                subjectId: evt.subjectId,
+                subjectName: evt.text,
+                locationId: evt.locationId
+            }
+
             await timetableStore.delete(timetable.value)
             toast.success("Data update successfuly")
 
@@ -297,7 +289,7 @@
         isDialogVisible.value = false;
 
         if(model) {
-            await postCreateEvent(model)
+            await postCreateUpdateEvent(model)
         }
 
         calendar.value.control.clearSelection()
